@@ -4,6 +4,7 @@
 
 Improvements
 
+- Add support for variable expansion. This is useful in files like launch.json, tasks.json, settings.json.
 - Improve the UI popups and general Makfile extension experience when a makefile isn't found. [#394 #415](https://github.com/microsoft/vscode-makefile-tools/pull/415) [@ushuz](https://github.com/ushuz). [#432](https://github.com/microsoft/vscode-makefile-tools/pull/432).
 - Add support for C++23 [#433](https://github.com/microsoft/vscode-makefile-tools/issues/433)
 - Allow for full paths to be provided in the `miDebuggerPath` field. [#341](https://github.com/microsoft/vscode-makefile-tools/issues/341)
