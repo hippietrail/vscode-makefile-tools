@@ -17,6 +17,7 @@ Bug fixes:
 - Avoid hanging on regexp runs. [#106](https://github.com/microsoft/vscode-makefile-tools/issues/106)
 - Typo fix for `PostgreSQL`. [#411](https://github.com/microsoft/vscode-makefile-tools/pull/411) [@hyoshioka0128](https://github.com/hyoshioka0128)
 - Ensure that we don't write into user settings when a value has been specified by the user. [#356](https://github.com/microsoft/vscode-makefile-tools/pull/356)
+- Fix regex parsing for targets [#441 #442](https://github.com/microsoft/vscode-makefile-tools/pull/442) [@nick-hebi](https://github.com/nick-hebi)
 
 ## 0.6.0
 
