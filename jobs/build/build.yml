@@ -1,0 +1,86 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+parameters:
+  - name: prerelease
+    type: boolean
+    default: false
+
+jobs: 
+  - job: Build
+    pool:
+      name: VSEngSS-MicroBuild2019-1ES
+    variables:
+      # MicroBuild requires TeamName to be set.
+      TeamName: C++ Cross Platform and Cloud
+    steps:
+      - task: MicroBuildSigningPlugin@3
+        displayName: Install MicroBuild Signing
+        inputs:
+          signType: $(SignType)
+          zipSources: false
+        # MicroBuild signing will always fail on public PRs.
+        condition: ne(variables['Build.Reason'], 'PullRequest')
+
+      # Run these scanners first so that they don't detect issues in dependencies.
+      # Failures won't break the build until "Check for compliance errors" step.
+      - task: CredScan@3
+        displayName: Run CredScan
+        inputs:
+          toolMajorVersion: V2
+      - task: PoliCheck@2
+        displayName: Run PoliCheck
+        inputs:
+          targetType: F
+          targetArgument: $(Build.SourcesDirectory)
+
+      - task: NodeTool@0
+        displayName: Use Node 16.x
+        inputs:
+          versionSpec: 16.x
+
+      # Override the patch version if this is a pre-release build.
+      - ${{ if parameters.prerelease }}:
+          - pwsh: node -e "p=require('./package.json');p.version=p.version.replace(/\.\d+$/,'.'+$(Build.BuildNumber));require('fs').writeFileSync('./package.json',JSON.stringify(p,undefined,2))"
+
+      - task: geeklearningio.gl-vsts-tasks-yarn.yarn-installer-task.YarnInstaller@3
+        displayName: 'Use Yarn 1.x'
+
+      - task: geeklearningio.gl-vsts-tasks-yarn.yarn-task.Yarn@3
+        displayName: 'Yarn install'
+        inputs:
+          arguments: install
+
+      - script: npm install --global gulp node-gyp @vscode/vsce
+        displayName: Install global dependencies
+      - script: npm install
+        displayName: Install project dependencies
+
+      - task: ComponentGovernanceComponentDetection@0
+        displayName: Detect components
+      - task: notice@0
+        displayName: Generate NOTICE file
+        inputs:
+          outputfile: $(Build.SourcesDirectory)/NOTICE.txt
+        condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+
+
+
+
+      - task: PostAnalysis@2
+        displayName: Check for compliance errors
+        # To avoid spirious warnings about missing logs, explicitly declare what we scanned.
+        inputs:
+          CredScan: true
+          PoliCheck: true
+
+      - task: TSAUpload@2
+        displayName: 'TSA Upload'
+        inputs:
+          GdnPublishTsaOnboard: true
+          GdnPublishTsaConfigFile: $(Build.SourcesDirectory)\jobs\build\tsa.gdntsa
+        # Don't open bugs for PR builds
+        condition: ne(variables['Build.Reason'], 'PullRequest')
+
+      - task: MicroBuildCleanup@1
+        displayName: Clean up MicroBuild

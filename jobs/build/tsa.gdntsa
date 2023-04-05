@@ -1,0 +1,9 @@
+{
+    "codebaseName": "vscode-makefile-tools",
+    "notificationAliases": ["gcampbell@microsoft.com", "andris@microsoft.com", "Ion.Todirel@microsoft.com"],
+    "instanceUrl": "https://devdiv.visualstudio.com",
+    "projectName": "DevDiv",
+    "areaPath": "DevDiv\\Cpp Developer Experience\\Cross Platform",
+    "iterationPath": "DevDiv",
+    "allTools": true
+}
