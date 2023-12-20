@@ -215,7 +215,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
     telemetry.activate();
 
-    context.subscriptions.push(vscode.languages.registerDocumentFormattingEditProvider('Makefile', new MakefileDocumentFormatProvider()));
+    context.subscriptions.push(vscode.languages.registerDocumentFormattingEditProvider('makefile', new MakefileDocumentFormatProvider()));
 
     context.subscriptions.push(vscode.commands.registerCommand('makefile.setBuildConfiguration', async () => {
         await configuration.setNewConfiguration();

@@ -584,6 +584,12 @@
                             "default": true
                         }
                     }
+                },
+                "makefile.formatter.enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "%makefile-tools.formatter.enabled.description%",
+                    "scope": "application"
                 }
             }
         },
