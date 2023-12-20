@@ -21,6 +21,7 @@ import * as cpp from 'vscode-cpptools';
 
 import * as nls from 'vscode-nls';
 import { readBuildLog } from './configuration';
+import { MakefileDocumentFormatProvider } from './formatProvider';
 nls.config({ messageFormat: nls.MessageFormat.bundle, bundleFormat: nls.BundleFormat.standalone })();
 const localize: nls.LocalizeFunc = nls.loadMessageBundle();
 
@@ -213,6 +214,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     await extension.setFullFeatureSet(false);
 
     telemetry.activate();
+
+    context.subscriptions.push(vscode.languages.registerDocumentFormattingEditProvider('Makefile', new MakefileDocumentFormatProvider()));
 
     context.subscriptions.push(vscode.commands.registerCommand('makefile.setBuildConfiguration', async () => {
         await configuration.setNewConfiguration();
